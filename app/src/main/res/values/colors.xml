@@ -8,6 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="custom_grey">#212121</color>
+    <color name="custom_grey_shade_light">#303030</color>
     <color name="col_app_background">#F5F6F7</color>
     <color name="col_error_screen_bg">#E85959</color>
     <color name="col_retry_button">#4A4A4A</color>

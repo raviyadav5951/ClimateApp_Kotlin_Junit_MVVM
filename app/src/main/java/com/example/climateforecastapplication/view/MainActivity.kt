@@ -6,11 +6,13 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.climateforecastapplication.R
 import com.example.climateforecastapplication.databinding.ActivityMainBinding
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
@@ -48,8 +50,8 @@ class MainActivity : AppCompatActivity() {
         setupLocation()
 
         binding.btnRetry.setOnClickListener {
-            binding.listError.visibility=View.GONE
-            binding.loadingView.visibility=View.VISIBLE
+           // binding.listError.visibility=View.GONE
+           // binding.loadingView.visibility=View.VISIBLE
             setupLocation()
         }
     }
@@ -77,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     private val currentLocationDataObserver =
         androidx.lifecycle.Observer<CurrentLocationWeather> { currentLocationData ->
             currentLocationData?.let {
-                Log.e("main","current day observer")
+              //  Log.e("main","current day observer")
                 binding.layoutContainer.visibility=View.VISIBLE
                 binding.tvCurrentCity.text=currentLocationData.name
                 binding.tvCurrentTemperature.text=currentLocationData.main?.temp?.toInt().toString() + "°C"
@@ -87,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     private val fourDayClimateDataObserver =
         androidx.lifecycle.Observer<WeatherResponse> { fourDaysData ->
             fourDaysData?.let {
-                Log.e("main","four day observer")
+              //  Log.e("main","four day observer")
                 populateWeatherListData(fourDaysData)
             }
         }
@@ -101,6 +103,10 @@ class MainActivity : AppCompatActivity() {
 
 //                Log.e("loc", "lat=${location.latitude}")
 //                Log.e("loc", "long=${location.longitude}")
+
+                val rotation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate);
+                rotation.fillAfter = true
+                binding.imageLoader.startAnimation(rotation)
                 viewModel.checkConnectionAndCallApis(location.latitude.toString(),
                         location.longitude.toString())
 
