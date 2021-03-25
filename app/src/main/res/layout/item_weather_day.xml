@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:minHeight="80dp"
-    android:padding="16dp"
-    >
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tvDay"
@@ -16,7 +16,10 @@
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
         android:layout_toLeftOf="@+id/tvTemp"
-        tools:text="11/04/2020" />
+        tools:text="11/04/2020"
+
+        />
+
 
     <TextView
         android:id="@+id/tvTemp"
@@ -28,9 +31,10 @@
         android:layout_centerInParent="true"
         tools:text="26" />
 
-    <View android:layout_width="match_parent"
+    <View
+        android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/col_app_background"/>
+        android:background="@color/col_app_background" />
 
 </RelativeLayout>

@@ -74,8 +74,11 @@
                 android:id="@+id/tv_current_temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_black"
+                app:fontFamily="@font/roboto_black"
                 android:textColor="@color/col_weather_labels"
                 android:textSize="96sp"
+                android:typeface="normal"
                 tools:text="20 C" />
 
             <TextView
@@ -84,7 +87,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/col_txt_cityname"
                 android:textSize="36sp"
-                tools:text="Pune" />
+                tools:text="Pune"
+                android:fontFamily="@font/roboto_thin"
+                app:fontFamily="@font/roboto_thin"/>
 
 
         </LinearLayout>
