@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainActivityViewModel
 
     private var weatherListAdapter=WeatherListAdapter(arrayListOf())
-   // private var list: ArrayList<WeekList>? = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
 
-        //creating viewmodel
+        //creating view model
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
         setUpRecyclerView()
@@ -45,11 +44,14 @@ class MainActivity : AppCompatActivity() {
         viewModel.loading.observe(this, loadingLiveDataObserver)
         viewModel.loadError.observe(this, loadingErrorDataObserver)
 
-        if(!Utils.isNetworkAvailable(this)){
-            Toast.makeText(this,"You are offline.Please switch on the internet connection",Toast.LENGTH_LONG).show()
-        }
 
         setupLocation()
+
+        binding.btnRetry.setOnClickListener {
+            binding.listError.visibility=View.GONE
+            binding.loadingView.visibility=View.VISIBLE
+            setupLocation()
+        }
     }
 
 
@@ -99,11 +101,8 @@ class MainActivity : AppCompatActivity() {
 
 //                Log.e("loc", "lat=${location.latitude}")
 //                Log.e("loc", "long=${location.longitude}")
-
-                viewModel.callWeatherApis(
-                    latitude = location.latitude.toString(),
-                    longitude = location.longitude.toString()
-                )
+                viewModel.checkConnectionAndCallApis(location.latitude.toString(),
+                        location.longitude.toString())
 
             }
 
@@ -112,7 +111,6 @@ class MainActivity : AppCompatActivity() {
                 // you may optionally do something to inform the user, even though the reason may be obvious
 
                 Toast.makeText(applicationContext,"Location permission is required to proceed ahead in the application.",Toast.LENGTH_LONG).show()
-
             }
 
         })

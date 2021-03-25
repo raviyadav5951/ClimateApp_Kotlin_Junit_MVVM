@@ -2,10 +2,12 @@ package com.example.climateforecastapplication.viewmodel
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
+import com.example.climateforecastapplication.retrofit.Utils
 import com.example.climateforecastapplication.retrofit.WeatherApiService
 
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,11 +30,23 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     private val api = WeatherApiService()
 
 
-    fun callWeatherApis(latitude: String?, longitude: String?) {
+    private fun callWeatherApis(latitude: String?, longitude: String?) {
         loading.value = true
         callCurrentLocationWeatherApi(latitude, longitude)
         callWeatherApiForFourDays(latitude, longitude)
 
+    }
+
+    fun checkConnectionAndCallApis(latitude: String?, longitude: String?){
+        if(Utils.isNetworkAvailable(getApplication())){
+
+            loadError.value=false
+            callWeatherApis(latitude,longitude)
+        }
+        else{
+            loadError.value=true
+            loading.value=false
+        }
     }
 
     private fun callCurrentLocationWeatherApi(latitude: String?, longitude: String?) {

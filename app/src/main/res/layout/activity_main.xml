@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.MainActivity"
-    >
+    tools:context=".view.MainActivity">
 
     <!--    Error -->
     <LinearLayout
@@ -13,18 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/col_error_screen_bg"
-        android:visibility="gone"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tvError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="54sp"
             android:gravity="left"
+            android:text="Something went wrong at our end!"
             android:textColor="@android:color/white"
+            android:textSize="54sp"
             tools:text="Something went wrong at our end!" />
 
         <Button
@@ -32,9 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="44dp"
+            android:backgroundTint="@color/col_retry_button"
             android:text="Retry"
-            android:textColor="@android:color/white"
-            android:background="@color/col_retry_button"/>
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 
@@ -66,25 +66,25 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.4"
+            android:background="@color/col_app_background"
             android:gravity="center"
-            android:orientation="vertical"
-            android:background="@color/col_app_background">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_current_temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="96sp"
                 android:textColor="@color/col_weather_labels"
+                android:textSize="96sp"
                 tools:text="20 C" />
 
             <TextView
                 android:id="@+id/tv_current_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/col_txt_cityname"
                 android:textSize="36sp"
-                tools:text="Pune"
-                android:textColor="@color/col_txt_cityname"/>
+                tools:text="Pune" />
 
 
         </LinearLayout>
