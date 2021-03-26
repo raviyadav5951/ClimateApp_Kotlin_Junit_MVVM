@@ -15,6 +15,7 @@ import com.example.climateforecastapplication.R
 import com.example.climateforecastapplication.databinding.ActivityMainBinding
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
+import com.example.climateforecastapplication.retrofit.Utils
 import com.example.climateforecastapplication.viewmodel.MainActivityViewModel
 import mumayank.com.airlocationlibrary.AirLocation
 
@@ -104,6 +105,12 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setupLocation() {
 
+        if(!Utils.isNetworkAvailable(this@MainActivity)){
+            binding.listError.visibility=View.VISIBLE
+            binding.loadingView.visibility=View.GONE
+            binding.layoutContainer.visibility=View.GONE
+            return
+        }
         airLocation = AirLocation(this, shouldWeRequestPermissions = true,shouldWeRequestOptimization = true, object : AirLocation.Callbacks {
             override fun onSuccess(location: Location) {
                 // location fetched successfully, proceed with it
@@ -114,8 +121,8 @@ class MainActivity : AppCompatActivity() {
                 val rotation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate);
                 rotation.fillAfter = true
                 binding.imageLoader.startAnimation(rotation)
-                viewModel.checkConnectionAndCallApis(location.latitude.toString(),
-                        location.longitude.toString())
+                viewModel.callWeatherApis(location.latitude.toString(),
+                        location.longitude.toString(),4)
 
             }
 

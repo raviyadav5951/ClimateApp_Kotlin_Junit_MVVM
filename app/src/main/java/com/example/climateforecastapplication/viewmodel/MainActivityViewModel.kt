@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.climateforecastapplication.di.AppModule
 import com.example.climateforecastapplication.di.DaggerViewModelComponent
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
@@ -15,6 +16,9 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+// We have taken injected var to know if viewmodel called from reallife scenarion or from test class.
+//If ListViewModel called from test then injected=true and we don't inject DaggerComponent since its a test and we have mock.
+
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
 
     val currentLocationData by lazy { MutableLiveData<CurrentLocationWeather>() }
@@ -22,6 +26,11 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     val loadError by lazy { MutableLiveData<Boolean>() }
     val loading by lazy { MutableLiveData<Boolean>() }
 
+    constructor(application: Application,test:Boolean=true):this(application){
+        injected=true
+    }
+
+    private var injected=false
 
     //create disposable and release it later in onCleared
     private val disposable = CompositeDisposable()
@@ -31,17 +40,28 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     @Inject
     lateinit var api: WeatherApiService
 
-    init {
-        DaggerViewModelComponent.create().inject(this)
+//    init {
+//        DaggerViewModelComponent.create().inject(this)
+//    }
+
+
+    fun inject(){
+        if(!injected){
+            DaggerViewModelComponent.builder()
+                .appModule(AppModule(getApplication()))
+                .build()
+                .inject(this)
+        }
     }
 
     /**
      * Method container to call the weather apis.
      */
-    private fun callWeatherApis(latitude: String?, longitude: String?) {
-        loading.value = true
+     fun callWeatherApis(latitude: String?, longitude: String?,countOfDays: Int) {
+        inject()
+        loading.postValue(true)
         callCurrentLocationWeatherApi(latitude, longitude)
-        callWeatherApiForFourDays(latitude, longitude)
+        callWeatherApiForFourDays(latitude, longitude,countOfDays)
 
     }
 
@@ -49,15 +69,15 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
      * To handle the error state on no internet connection
      *
      */
-    fun checkConnectionAndCallApis(latitude: String?, longitude: String?){
+    fun checkConnectionAndCallApis(latitude: String?, longitude: String?,countOfDays: Int){
         if(Utils.isNetworkAvailable(getApplication())){
 
-            loadError.value=false
-            callWeatherApis(latitude,longitude)
+            loadError.postValue(false)
+            callWeatherApis(latitude,longitude,countOfDays)
         }
         else{
-            loadError.value=true
-            loading.value=false
+            loadError.postValue(true)
+            loading.postValue(false)
         }
     }
 
@@ -75,26 +95,26 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     override fun onSuccess(responseObject: CurrentLocationWeather) {
                         when (responseObject.cod) {
                             200 -> {
-                                loadError.value = false
-                                loading.value = false
-                                currentLocationData.value=responseObject
+                                loadError.postValue(false)
+                                loading.postValue(false)
+                                currentLocationData.postValue(responseObject)
                                 //  Log.e("api response1=", responseObject.toString())
                             }
                             401 -> {
-                                loadError.value = true
-                                loading.value = false
-                                Log.e("api response fail=", responseObject.toString())
+                                loadError.postValue( true)
+                                loading.postValue(false)
+                               // Log.e("api response fail=", responseObject.toString())
                             }
                             else -> {
-                                loadError.value = true
-                                loading.value = false
+                                loadError.postValue( true)
+                                loading.postValue(false)
                             }
                         }
                     }
 
                     override fun onError(e: Throwable) {
-                        loadError.value = true
-                        loading.value = false
+                        loadError.postValue( true)
+                        loading.postValue(false)
                         e.printStackTrace()
                     }
 
@@ -107,36 +127,36 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
      * based on latitude and longitude.
      * We have to mention countOfDays to get the forecast.
      */
-    private fun callWeatherApiForFourDays(latitude: String?, longitude: String?) {
+    private fun callWeatherApiForFourDays(latitude: String?, longitude: String?,countOfDays:Int) {
 
         disposable.add(
-            api.getFourDaysForecastData(latitude = latitude, longitude = longitude, countOfDays = 4)
+            api.getFourDaysForecastData(latitude = latitude, longitude = longitude, countOfDays = countOfDays)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<WeatherResponse>() {
                     override fun onSuccess(responseObject: WeatherResponse) {
                         when (responseObject.cod) {
                             200 -> {
-                                fourDaysData.value=responseObject
-                                loadError.value = false
-                                loading.value = false
+                                fourDaysData.postValue(responseObject)
+                                loadError.postValue( false)
+                                loading.postValue(false)
                                 //  Log.e("api response2=", responseObject.toString())
                             }
                             401 -> {
-                                loadError.value = true
-                                loading.value = false
-                                Log.e("api response fail=", responseObject.toString())
+                                loadError.postValue(true)
+                                loading.postValue(false)
+                               // Log.e("api response fail=", responseObject.toString())
                             }
                             else -> {
-                                loadError.value = true
-                                loading.value = false
+                                loadError.postValue(true)
+                                loading.postValue(false)
                             }
                         }
                     }
 
                     override fun onError(e: Throwable) {
-                        loadError.value = true
-                        loading.value = false
+                        loadError.postValue( true)
+                        loading.postValue(false)
                         e.printStackTrace()
                     }
 

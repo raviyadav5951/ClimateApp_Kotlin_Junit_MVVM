@@ -42,7 +42,7 @@ class WeatherApiService {
 
 
     //fetch 4 days forecast data
-    fun getFourDaysForecastData(
+    open fun getFourDaysForecastData(
         latitude: String?,
         longitude: String?,
         countOfDays: Int

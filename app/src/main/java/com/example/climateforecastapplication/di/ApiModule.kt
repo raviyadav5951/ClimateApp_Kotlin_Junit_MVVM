@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 @Module
-class ApiModule {
+open class ApiModule {
     private val BASE_URL=WeatherApiService.BASE_URL
     private val REQUEST_TIMEOUT_DURATION = 10
     private val DEBUG = true
@@ -33,7 +33,7 @@ class ApiModule {
     }
 
     @Provides
-    fun provideWeatherApiService():WeatherApiService{
+    open fun provideWeatherApiService():WeatherApiService{
         return WeatherApiService()
     }
 
