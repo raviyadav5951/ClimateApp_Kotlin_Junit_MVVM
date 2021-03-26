@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">ClimateForecastApplication</string>
+    <string name="app_name">Forecast App</string>
+    <string name="location_permission_required">Location permission is required to proceed ahead in the application.</string>
+
+    <string name="error_message">Something went wrong at our end!</string>
+    <string name="retry">Retry</string>
 </resources>

@@ -2,18 +2,18 @@ package com.example.climateforecastapplication.viewmodel
 
 import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.climateforecastapplication.di.DaggerViewModelComponent
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
 import com.example.climateforecastapplication.retrofit.Utils
 import com.example.climateforecastapplication.retrofit.WeatherApiService
-
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -26,10 +26,18 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     //create disposable and release it later in onCleared
     private val disposable = CompositeDisposable()
 
-    //create api service
-    private val api = WeatherApiService()
 
+    //create api service (Injecting the dependency)
+    @Inject
+    lateinit var api: WeatherApiService
 
+    init {
+        DaggerViewModelComponent.create().inject(this)
+    }
+
+    /**
+     * Method container to call the weather apis.
+     */
     private fun callWeatherApis(latitude: String?, longitude: String?) {
         loading.value = true
         callCurrentLocationWeatherApi(latitude, longitude)
@@ -37,6 +45,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     }
 
+    /**
+     * To handle the error state on no internet connection
+     *
+     */
     fun checkConnectionAndCallApis(latitude: String?, longitude: String?){
         if(Utils.isNetworkAvailable(getApplication())){
 
@@ -49,6 +61,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    /**
+     * This api will return the weather data for the current location
+     * based on latitude and longitude
+     */
     private fun callCurrentLocationWeatherApi(latitude: String?, longitude: String?) {
 
         disposable.add(
@@ -86,6 +102,11 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         )
     }
 
+    /**
+     * This api will return the weather forecast list for data for the current location
+     * based on latitude and longitude.
+     * We have to mention countOfDays to get the forecast.
+     */
     private fun callWeatherApiForFourDays(latitude: String?, longitude: String?) {
 
         disposable.add(
@@ -124,8 +145,9 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
 
-
-
+    /**
+     * Clearing the disposable once its task is over.
+     */
     override fun onCleared() {
         super.onCleared()
         disposable.clear()

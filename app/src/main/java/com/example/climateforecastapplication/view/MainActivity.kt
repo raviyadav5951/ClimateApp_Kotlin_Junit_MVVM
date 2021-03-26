@@ -4,7 +4,6 @@ package com.example.climateforecastapplication.view
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -16,7 +15,6 @@ import com.example.climateforecastapplication.R
 import com.example.climateforecastapplication.databinding.ActivityMainBinding
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
-import com.example.climateforecastapplication.retrofit.Utils
 import com.example.climateforecastapplication.viewmodel.MainActivityViewModel
 import mumayank.com.airlocationlibrary.AirLocation
 
@@ -38,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         //creating view model
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
+        //setting up recycler view and adapter
         setUpRecyclerView()
 
         //observer assignment
@@ -47,8 +46,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.loadError.observe(this, loadingErrorDataObserver)
 
 
+        //start listening for location
         setupLocation()
 
+        //click event for retry button
         binding.btnRetry.setOnClickListener {
            // binding.listError.visibility=View.GONE
            // binding.loadingView.visibility=View.VISIBLE
@@ -64,6 +65,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * *************** Observers
+     */
     private val loadingErrorDataObserver = androidx.lifecycle.Observer<Boolean> { isError ->
         binding.listError.visibility = if (isError) View.VISIBLE else View.GONE
     }
@@ -95,14 +99,17 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    /**
+     * Function will return the latitude and longitude once location permission is provided
+     */
     private fun setupLocation() {
 
         airLocation = AirLocation(this, shouldWeRequestPermissions = true,shouldWeRequestOptimization = true, object : AirLocation.Callbacks {
             override fun onSuccess(location: Location) {
                 // location fetched successfully, proceed with it
 
-//                Log.e("loc", "lat=${location.latitude}")
-//                Log.e("loc", "long=${location.longitude}")
+               // Log.e("loc", "lat=${location.latitude}")
+               // Log.e("loc", "long=${location.longitude}")
 
                 val rotation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate);
                 rotation.fillAfter = true
@@ -116,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                 // couldn't fetch location due to reason available in locationFailedEnum
                 // you may optionally do something to inform the user, even though the reason may be obvious
 
-                Toast.makeText(applicationContext,"Location permission is required to proceed ahead in the application.",Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,getString(R.string.location_permission_required),Toast.LENGTH_LONG).show()
             }
 
         })
@@ -136,6 +143,12 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+
+    /**
+     * This method will populate the list of climate forecast data once the
+     * fourDayClimateDataObserver reacts after getting the data from succesful
+     * api call.
+     */
     private fun populateWeatherListData(fourDaysData: WeatherResponse) {
         try {
             //Log.e("main","in populateData")

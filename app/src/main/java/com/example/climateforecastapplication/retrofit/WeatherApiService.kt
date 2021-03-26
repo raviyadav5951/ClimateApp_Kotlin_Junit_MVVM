@@ -1,6 +1,8 @@
 package com.example.climateforecastapplication.retrofit
 
 import com.example.climateforecastapplication.BuildConfig
+import com.example.climateforecastapplication.BuildConfig.API_KEY
+import com.example.climateforecastapplication.di.DaggerApiComponent
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
 import io.reactivex.Single
@@ -11,6 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * This class can also be termed as Repository in MVVM terminology
@@ -19,22 +22,23 @@ import java.util.concurrent.TimeUnit
 //http://api.openweathermap.org/data/2.5/forecast/daily?q=Pune&units=metric&cnt=4&appid=cc65d87afabccabcd3c47633ef7d504d
 
 class WeatherApiService {
-    private val REQUEST_TIMEOUT_DURATION = 10
-    private val DEBUG = true
-    private val BASE_URL = "https://api.openweathermap.org/data/2.5/"
-    private val API_KEY: String = BuildConfig.API_KEY
 
-    private val api = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        .client(createRequestInterceptorClient())
-        .build()
-        .create(WeatherApiInterface::class.java)
+    init {
+        DaggerApiComponent.create().inject(this)
+    }
+
+    //Injecting the dependency
+    @Inject
+    lateinit var apiInterface:WeatherApiInterface
+
+    companion object{
+        val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+    }
+
 
     //These fun will call  api for fetching current location weather data
     fun getCurrentLocation(latitude: String?, longitude: String?): Single<CurrentLocationWeather> =
-        api.getCurrentLocationWeather(latitude, longitude, appid = API_KEY)
+        apiInterface.getCurrentLocationWeather(latitude, longitude, appid = API_KEY)
 
 
     //fetch 4 days forecast data
@@ -42,38 +46,10 @@ class WeatherApiService {
         latitude: String?,
         longitude: String?,
         countOfDays: Int
-    ): Single<WeatherResponse> = api.getFourDaysForecastData(
+    ): Single<WeatherResponse> = apiInterface.getFourDaysForecastData(
         latitude = latitude,
         longitude = longitude,
         countOfDays = countOfDays,
         appid = API_KEY
     )
-
-
-    //here we have added the interceptor to display logs when api is called.
-    private fun createRequestInterceptorClient(): OkHttpClient {
-        val interceptor = Interceptor { chain ->
-            val original = chain.request()
-            val requestBuilder = original.newBuilder()
-            val request = requestBuilder.build()
-            chain.proceed(request)
-        }
-
-        return if (DEBUG) {
-            OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .connectTimeout(REQUEST_TIMEOUT_DURATION.toLong(), TimeUnit.SECONDS)
-                .readTimeout(REQUEST_TIMEOUT_DURATION.toLong(), TimeUnit.SECONDS)
-                .writeTimeout(REQUEST_TIMEOUT_DURATION.toLong(), TimeUnit.SECONDS)
-                .build()
-        } else {
-            OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .connectTimeout(REQUEST_TIMEOUT_DURATION.toLong(), TimeUnit.SECONDS)
-                .readTimeout(REQUEST_TIMEOUT_DURATION.toLong(), TimeUnit.SECONDS)
-                .writeTimeout(REQUEST_TIMEOUT_DURATION.toLong(), TimeUnit.SECONDS)
-                .build()
-        }
-    }
 }

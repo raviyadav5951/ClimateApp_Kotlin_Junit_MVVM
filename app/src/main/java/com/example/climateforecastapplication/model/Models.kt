@@ -1,6 +1,6 @@
 package com.example.climateforecastapplication.model
 
-
+/** All model class/data class for holding the response from api call is here **/
 
 data class CurrentLocationWeather(
     var id: Int = 0,

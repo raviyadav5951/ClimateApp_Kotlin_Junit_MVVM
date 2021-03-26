@@ -1,17 +1,12 @@
 package com.example.climateforecastapplication.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.example.climateforecastapplication.databinding.ItemWeatherDayBinding
 import com.example.climateforecastapplication.model.WeekList
-
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class WeatherListAdapter(private val list: ArrayList<WeekList>?) :
     RecyclerView.Adapter<WeatherListAdapter.ChildViewHolder>() {
@@ -33,7 +28,7 @@ class WeatherListAdapter(private val list: ArrayList<WeekList>?) :
     }
 
     override fun getItemCount(): Int {
-        Log.e("item", "count=" + list?.size)
+       // Log.e("item", "count=" + list?.size)
         return list!!.size
     }
 
