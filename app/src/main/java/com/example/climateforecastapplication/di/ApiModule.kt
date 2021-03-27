@@ -27,7 +27,6 @@ open class ApiModule {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .client(createRequestInterceptorClient())
             .build()
             .create(WeatherApiInterface::class.java)
     }

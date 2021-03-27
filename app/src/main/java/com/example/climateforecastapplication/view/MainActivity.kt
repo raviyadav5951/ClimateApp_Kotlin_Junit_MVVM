@@ -16,6 +16,7 @@ import com.example.climateforecastapplication.databinding.ActivityMainBinding
 import com.example.climateforecastapplication.model.CurrentLocationWeather
 import com.example.climateforecastapplication.model.WeatherResponse
 import com.example.climateforecastapplication.retrofit.Utils
+import com.example.climateforecastapplication.retrofit.WeatherApiService
 import com.example.climateforecastapplication.viewmodel.MainActivityViewModel
 import mumayank.com.airlocationlibrary.AirLocation
 
@@ -69,10 +70,17 @@ class MainActivity : AppCompatActivity() {
     /**
      * *************** Observers
      */
+
+    /**
+     * Observer for error data in case of no internet
+     */
     private val loadingErrorDataObserver = androidx.lifecycle.Observer<Boolean> { isError ->
         binding.listError.visibility = if (isError) View.VISIBLE else View.GONE
     }
 
+    /**
+     * Observer for loading state
+     */
     private val loadingLiveDataObserver = androidx.lifecycle.Observer<Boolean> { isLoading ->
         binding.loadingView.visibility = if (isLoading) View.VISIBLE else View.GONE
         if (isLoading) {
@@ -81,6 +89,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Observer for displaying the current city name and temperature
+     */
     private val currentLocationDataObserver =
         androidx.lifecycle.Observer<CurrentLocationWeather> { currentLocationData ->
             currentLocationData?.let {
@@ -91,6 +102,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /**
+     * Observer for populating the climate list
+     */
     private val fourDayClimateDataObserver =
         androidx.lifecycle.Observer<WeatherResponse> { fourDaysData ->
             fourDaysData?.let {
@@ -111,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             binding.layoutContainer.visibility=View.GONE
             return
         }
-        airLocation = AirLocation(this, shouldWeRequestPermissions = true,shouldWeRequestOptimization = true, object : AirLocation.Callbacks {
+        airLocation = AirLocation(this, shouldWeRequestPermissions = true,shouldWeRequestOptimization = true,callbacks =  object : AirLocation.Callbacks {
             override fun onSuccess(location: Location) {
                 // location fetched successfully, proceed with it
 
@@ -122,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 rotation.fillAfter = true
                 binding.imageLoader.startAnimation(rotation)
                 viewModel.callWeatherApis(location.latitude.toString(),
-                        location.longitude.toString(),4)
+                        location.longitude.toString(),WeatherApiService.COUNT_OF_DAYS)
 
             }
 
@@ -153,13 +167,21 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * This method will populate the list of climate forecast data once the
-     * fourDayClimateDataObserver reacts after getting the data from succesful
+     * fourDayClimateDataObserver reacts after getting the data from successful
      * api call.
+     *
+     * Here we have requested 5 days call and to show next 4 day temperature
+     * we removed the first item(current day)
      */
+
     private fun populateWeatherListData(fourDaysData: WeatherResponse) {
         try {
             //Log.e("main","in populateData")
             fourDaysData.let{
+
+                if(fourDaysData.list.size==5){
+                    fourDaysData.list.removeAt(0)
+                }
                 binding.layoutContainer.visibility=View.VISIBLE
                 binding.listClimate.visibility=View.VISIBLE
                 weatherListAdapter.updateWeatherList(fourDaysData.list)

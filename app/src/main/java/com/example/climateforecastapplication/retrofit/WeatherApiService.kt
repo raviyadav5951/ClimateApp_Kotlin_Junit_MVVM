@@ -33,6 +33,7 @@ class WeatherApiService {
 
     companion object{
         val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+        val COUNT_OF_DAYS=5
     }
 
 

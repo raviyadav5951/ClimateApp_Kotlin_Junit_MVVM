@@ -16,8 +16,10 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-// We have taken injected var to know if viewmodel called from reallife scenarion or from test class.
-//If ListViewModel called from test then injected=true and we don't inject DaggerComponent since its a test and we have mock.
+/**
+ *  We have taken injected var to know if viewmodel called from reallife scenario or from test class.
+ *  If ListViewModel called from test then injected=true and we don't inject DaggerComponent since its a test and we have mock.
+ */
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -85,7 +87,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
      * This api will return the weather data for the current location
      * based on latitude and longitude
      */
-    private fun callCurrentLocationWeatherApi(latitude: String?, longitude: String?) {
+     fun callCurrentLocationWeatherApi(latitude: String?, longitude: String?) {
 
         disposable.add(
             api.getCurrentLocation(latitude = latitude, longitude = longitude)
@@ -127,7 +129,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
      * based on latitude and longitude.
      * We have to mention countOfDays to get the forecast.
      */
-    private fun callWeatherApiForFourDays(latitude: String?, longitude: String?,countOfDays:Int) {
+     fun callWeatherApiForFourDays(latitude: String?, longitude: String?,countOfDays:Int) {
 
         disposable.add(
             api.getFourDaysForecastData(latitude = latitude, longitude = longitude, countOfDays = countOfDays)
@@ -157,6 +159,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     override fun onError(e: Throwable) {
                         loadError.postValue( true)
                         loading.postValue(false)
+                        fourDaysData.postValue(null)
                         e.printStackTrace()
                     }
 

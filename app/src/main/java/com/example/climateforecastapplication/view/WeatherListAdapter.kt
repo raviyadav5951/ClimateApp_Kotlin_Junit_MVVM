@@ -8,6 +8,9 @@ import com.example.climateforecastapplication.model.WeekList
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Adapter class for displaying the climate of next four days
+ */
 class WeatherListAdapter(private val list: ArrayList<WeekList>?) :
     RecyclerView.Adapter<WeatherListAdapter.ChildViewHolder>() {
 
