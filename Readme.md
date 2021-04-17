@@ -23,8 +23,7 @@ https://github.com/square/retrofit
 https://github.com/ReactiveX/RxJava
 https://github.com/junit-team/junit4
 https://github.com/mumayank/AirLocation
-## App Demo:
-![Screenshot](/screenshots_apk/forecast_app.gif)
+
 
 ##Apk
 Please Check /screenshots_apk/forecast_app_ravi.apk
