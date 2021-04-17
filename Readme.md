@@ -1,9 +1,6 @@
 
 ## Weather Api Endpoint
-Instead of using the https://www.apixu.com/doc/history.aspx api for getting weather 
-I have used https://openweathermap.org/forecast16
-Reason is for for getting four days forecast data the openweathermap is free where as apixu needed to have a paid plan.
-![Screenshot](/screenshots_apk/apixu.png)
+Used https://openweathermap.org/forecast16
 
 ## Topics Covered:
 Rxjava = For async operations.
@@ -13,7 +10,7 @@ Mocking: Mockito
 Unit test: Junit4
 ViewModel,Live Data,Observables
 
-## Task Completed :
+## Topics Completed explanation:
 - Get current location to acquire latitude and longitude.
 - ViewModel along with MVVM architecture for observing the list items and status.
 - View Binding feature.
